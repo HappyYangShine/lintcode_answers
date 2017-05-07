@@ -6232,3 +6232,141 @@ public:
     }
 };
 
+
+125 背包问题 II 
+
+
+给出n个物品的体积A[i]和其价值V[i]，将他们装入一个大小为m的背包，最多能装入的总价值有多大？
+注意事项
+
+A[i], V[i], n, m均为整数。你不能将物品进行切分。你所挑选的物品总体积需要小于等于给定的m。
+您在真实的面试中是否遇到过这个题？
+样例
+
+对于物品体积[2, 3, 5, 7]和对应的价值[1, 5, 2, 4], 假设背包大小为10的话，最大能够装入的价值为9。
+挑战
+
+O(n x m) memory is acceptable, can you do it in O(m) memory?
+
+
+class Solution {
+public:
+    /**
+     * @param m: An integer m denotes the size of a backpack
+     * @param A & V: Given n items with size A[i] and value V[i]
+     * @return: The maximum value
+     */
+    int backPackII(int m, vector<int> A, vector<int> V) {
+        // write your code here
+        // 1
+        /*
+        int stuff_nums = A.size();
+        int dp[stuff_nums][m + 1];
+        fill((int *)dp, (int *)dp + stuff_nums * (m + 1), 0);
+        //dp[i][j]为价值为最大价值, i为第i个物品，j为背包容量为j
+        //vector<vector<int>> dp(stuff_nums, vector<int>(m + 1, 0));  
+        for (int i = 0; i < stuff_nums; ++i)
+        {
+            dp[i][0] = 0;
+        }
+        for (int j = 1; j < m + 1; ++j)
+        {
+            if (A[0] > j)
+            {
+                dp[0][j] = 0;
+            }
+            else
+            {
+                dp[0][j] = V[0];
+            }
+            for (int i = 1; i < stuff_nums; ++i)
+            {
+                if (A[i] > j)
+                {
+                    dp[i][j] = dp[i - 1][j];
+                }
+                else
+                {
+                    dp[i][j] = max(dp[i - 1][j -A[i]] + V[i], dp[i - 1][j]);
+                }
+            }
+        }
+        return dp[stuff_nums - 1][m];
+        */
+        
+        //2
+        int stuff_nums = A.size();
+        int dp[m + 1];
+        fill(dp, dp + m + 1, 0);
+        for (int i = 0; i < stuff_nums; ++i)
+        {
+            for (int j = m; j > 0; --j)
+            {
+                if (A[i] <= j)
+                {
+                    dp[j] = max(dp[j], dp[j - A[i]] + V[i]);
+                }
+            }
+        }
+        return dp[m];
+    }
+};
+
+
+564 背包问题 VI 
+ 背包问题 VI
+
+    描述
+    笔记
+    数据
+    评测
+
+给出一个都是正整数的数组 nums，其中没有重复的数。从中找出所有的和为 target 的组合个数。
+注意事项
+
+一个数可以在组合中出现多次。
+数的顺序不同则会被认为是不同的组合。
+您在真实的面试中是否遇到过这个题？
+样例
+
+给出 nums = [1, 2, 4], target = 4
+可能的所有组合有：
+
+[1, 1, 1, 1]
+[1, 1, 2]
+[1, 2, 1]
+[2, 1, 1]
+[2, 2]
+[4]
+
+返回 6
+
+
+这道题可以转换成一种背包问题。给一个数组表示n个物品每个数表示每个物品的重量， 物品可重复使用。如果有一个背包容量是w，让你找出恰好装满的所有可能性的数量。 抽象成dp公式就和numbers combination一样了。
+
+我们需要一个一维数组dp，其中dp[i]表示目标数为i的解的个数，然后我们从1遍历到target，对于每一个数i，遍历nums数组，如果i>=x, dp[i] += dp[i - x]。这个也很好理解，比如说对于[1,2,3] 4，这个例子，当我们在计算dp[3]的时候，3可以拆分为1+x，而x即为dp[2]，3也可以拆分为2+x，此时x为dp[1]，3同样可以拆为3+x，此时x为dp[0]，我们把所有的情况加起来就是组成3的所有情况了
+
+class Solution {
+public:
+    /**
+     * @param nums an integer array and all positive numbers, no duplicates
+     * @param target an integer
+     * @return an integer
+     */
+    int backPackVI(vector<int>& nums, int target) {
+        // Write your code here
+        vector<int> dp(target + 1, 0);
+        dp[0] = 1;  //target为0时有一中组合，空数组
+        for (int i = 1; i < target + 1; ++i)
+        {
+            for (auto each : nums)
+            {
+                if (each <= i)
+                {
+                    dp[i] += dp[i - each];
+                }
+            }
+        }
+        return dp.back();
+    }
+};
