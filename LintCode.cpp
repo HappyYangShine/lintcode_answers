@@ -6314,6 +6314,9 @@ public:
 
 
 564 背包问题 VI 
+http://www.cnblogs.com/grandyang/p/5743719.html
+http://www.cnblogs.com/grandyang/p/5705750.html
+
  背包问题 VI
 
     描述
@@ -6368,5 +6371,174 @@ public:
             }
         }
         return dp.back();
+    }
+};
+
+
+149 买卖股票的最佳时机
+http://www.lintcode.com/zh-cn/problem/best-time-to-buy-and-sell-stock/
+
+    描述
+    笔记
+    数据
+    评测
+
+假设有一个数组，它的第i个元素是一支给定的股票在第i天的价格。如果你最多只允许完成一次交易(例如,一次买卖股票),设计一个算法来找出最大利润。
+您在真实的面试中是否遇到过这个题？
+样例
+
+给出一个数组样例 [3,2,3,1,2], 返回 1 
+
+class Solution {
+public:
+    /**
+     * @param prices: Given an integer array
+     * @return: Maximum profit
+     */
+    int maxProfit(vector<int> &prices) {
+        // write your code here
+        // 1 超时
+        /*
+        int max_profit = 0;
+        for (int i = 0; i < prices.size(); ++i)
+        {
+            for (int j = i + 1; j < prices.size(); ++j)
+            {
+                if (prices[j] - prices[i] > max_profit)
+                {
+                    max_profit = prices[j] - prices[i];
+                }
+            }
+        }
+        return max_profit;
+        */
+        
+        // 2
+        if (0 == prices.size())
+        {
+            return 0;
+        }
+        int max_profit = 0;
+        int buy_prices = prices[0];
+        for (int i = 0; i < prices.size(); ++i)
+        {
+            if (prices[i] - buy_prices < 0)
+            {
+                buy_prices = prices[i];
+            }
+            else
+            {
+                if (prices[i] - buy_prices > max_profit)
+                {
+                    max_profit = prices[i] - buy_prices;
+                }
+            }
+        }
+        return max_profit;
+    }
+};
+
+150  买卖股票的最佳时机 II
+
+    描述
+    笔记
+    数据
+    评测
+
+假设有一个数组，它的第i个元素是一个给定的股票在第i天的价格。设计一个算法来找到最大的利润。你可以完成尽可能多的交易(多次买卖股票)。然而,你不能同时参与多个交易(你必须在再次购买前出售股票)。
+您在真实的面试中是否遇到过这个题？
+样例
+
+给出一个数组样例[2,1,2,0,1], 返回 2
+
+class Solution {
+public:
+    /**
+     * @param prices: Given an integer array
+     * @return: Maximum profit
+     */
+    int maxProfit(vector<int> &prices) {
+        // write your code here
+        if (0 == prices.size())
+        {
+            return 0;
+        }
+        int max_profit = 0;
+        int buy_prices = prices[0];
+        for (int i = 1; i < prices.size(); ++i)
+        {
+            if (prices[i] - buy_prices < 0)
+            {
+                buy_prices = prices[i];
+            }
+            else
+            {
+                max_profit += prices[i] - buy_prices;
+                buy_prices = prices[i];
+            }
+        }
+        return max_profit;
+    }
+};
+
+
+
+151. 买卖股票的最佳时机 III 
+
+ 描述
+ 笔记
+ 数据
+ 评测
+假设你有一个数组，它的第i个元素是一支给定的股票在第i天的价格。设计一个算法来找到最大的利润。你最多可以完成两笔交易。
+
+ 注意事项
+
+你不可以同时参与多笔交易(你必须在再次购买前出售掉之前的股票)
+
+您在真实的面试中是否遇到过这个题？ Yes
+样例
+给出一个样例数组 [4,4,6,1,1,4,2,5], 返回 6
+
+http://blog.csdn.net/dr_unknown/article/details/51939121
+
+分析：动态规划法。以第i天为分界线，计算第i天之 前 进行一次交易的最大收益preProfit[i]，和第i天之 后 进行一次交易的最大收益postProfit[i]，最后遍历一遍，max{preProfit[i] + postProfit[i]} (0≤i≤n-1)就是最大收益。第i天之前和第i天之后进行一次的最大收益求法同Best Time to Buy and Sell Stock I。
+
+代码：时间O(n)，空间O(n)。
+
+class Solution {
+public:
+    /**
+     * @param prices: Given an integer array
+     * @return: Maximum profit
+     */
+    int maxProfit(vector<int> &prices) {
+        // write your code here
+        int length = prices.size();
+        if (0 == length)
+        {
+            return 0;
+        }
+        int pre_max_profit[length];  // 第一笔交易的最大收入
+        int post_max_profit[length];  // 第二笔交易的最大收入
+        fill(pre_max_profit, pre_max_profit + length, 0);
+        fill(post_max_profit, post_max_profit + length, 0);
+        int cur_min = prices[0];
+        for (int i = 1; i < length; ++i)
+        {
+            cur_min = min(cur_min, prices[i]);
+            pre_max_profit[i] = max(pre_max_profit[i - 1], prices[i] - cur_min);
+        }
+        int cur_max = prices[length - 1];
+        for (int i = length - 2; i >= 0; --i)
+        {
+            cur_max = max(cur_max, prices[i]);
+            post_max_profit[i] = max(post_max_profit[i + 1], cur_max - prices[i]);
+        }
+        int max_profit = 0;
+        for (int i = 0; i < length; ++i)
+        {
+            max_profit = max(max_profit, pre_max_profit[i] + post_max_profit[i]);
+        }
+        return max_profit;
     }
 };
