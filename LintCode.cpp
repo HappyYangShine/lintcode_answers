@@ -6776,3 +6776,216 @@ public:
     }
 };
 
+
+94 二叉树中的最大路径和  Binary Tree Maximum Path Sum
+
+
+给出一棵二叉树，寻找一条路径使其路径和最大，路径可以在任一节点中开始和结束（路径和为两个节点之间所在路径上的节点权值之和）
+您在真实的面试中是否遇到过这个题？
+样例
+
+给出一棵二叉树：
+
+       1
+      / \
+     2   3
+
+返回 6
+
+
+
+思路：
+分析：每条最长路径都肯定会以某个顶点为跟，然后两边是以那个节点为跟到叶子节点的最长路径
+http://blog.csdn.net/wangyuquanliuli/article/details/45897297
+http://blog.csdn.net/zhaopengnju/article/details/51759938
+
+/**
+ * Definition of TreeNode:
+ * class TreeNode {
+ * public:
+ *     int val;
+ *     TreeNode *left, *right;
+ *     TreeNode(int val) {
+ *         this->val = val;
+ *         this->left = this->right = NULL;
+ *     }
+ * }
+ */
+class Solution {
+public:
+    /**
+     * @param root: The root of binary tree.
+     * @return: An integer
+     */
+    int maxPathSum(TreeNode *root) {
+        // write your code here
+        int result = INT_MIN;
+        MaxSinglePathSum(root, result);
+        return result;
+    }
+    
+    // 返回从当前节点到叶子节点的最大路径和
+    
+    int MaxSinglePathSum(TreeNode *root, int &result)
+    {
+        if (NULL == root)
+        {
+            return 0;
+        }
+        int left_max_sum = MaxSinglePathSum(root->left, result);
+        int right_max_sum = MaxSinglePathSum(root->right, result);
+        result = max(result, max(0, left_max_sum) + max(0, right_max_sum) +
+                    root->val);
+        return max(0, max(left_max_sum, right_max_sum)) + root->val;
+    }
+    
+};
+
+394 硬币排成线 coins-in-a-line
+
+
+
+有 n 个硬币排成一条线。两个参赛者轮流从右边依次拿走 1 或 2 个硬币，直到没有硬币为止。拿到最后一枚硬币的人获胜。
+
+请判定 第一个玩家 是输还是赢？
+您在真实的面试中是否遇到过这个题？
+样例
+
+n = 1, 返回 true.
+
+n = 2, 返回 true.
+
+n = 3, 返回 false.
+
+n = 4, 返回 true.
+
+n = 5, 返回 true.
+挑战
+
+O(1) 时间复杂度且O(1) 存储。
+
+http://blog.csdn.net/waltonhuang/article/details/52040596
+http://blog.csdn.net/wangyuquanliuli/article/details/47361395
+
+
+
+class Solution {
+public:
+    /**
+     * @param n: an integer
+     * @return: a boolean which equals to true if the first player will win
+     */
+     bool firstWillWin(int n) {
+        // write your code here
+        
+        //1
+        /*
+        if (0 == n)
+        {
+            return false;
+        }
+        if (1 == n || 2 == n)
+        {
+            return true;
+        }
+        vector<bool> win_lose(n + 1);
+        win_lose[0] = false;  // 0个硬币，输
+        win_lose[1] = true;   // 1个硬币，赢
+        win_lose[2] = true;
+        for (int i = 3; i <= n; ++i)
+        {
+            win_lose[i] = !(win_lose[i - 1] && win_lose[i - 2]);
+        }
+        return win_lose[n];
+        */
+        
+        //2
+        /*
+        if (n == 0)
+            return false;
+        if (n == 1 || n == 2)
+            return true;
+        bool pre = true;
+        bool now = true;
+        for (int i = 3; i <= n; i++)
+        {
+            bool tmp = now;
+            now = !(pre && now);
+            pre = tmp;
+        }
+        return now;
+        */
+
+        //3
+        return n % 3 != 0;
+    }
+};
+
+
+512 解码方法 Decode Ways
+
+
+有一个消息包含A-Z通过以下规则编码
+
+'A' -> 1
+'B' -> 2
+...
+'Z' -> 26
+
+现在给你一个加密过后的消息，问有几种解码的方式
+您在真实的面试中是否遇到过这个题？
+样例
+
+给你的消息为12，有两种方式解码 AB(12) 或者 L(12). 所以返回 2
+
+http://www.cnblogs.com/grandyang/p/4313384.html
+http://www.jiuzhang.com/solution/decode-ways/
+
+类似斐波那契数列
+dp[s.size()]
+如果s[i] 为‘0’，则无法解码，dp[i] = 0, 否则， dp[i] = dp[i - 1]
+继续计算dp[i]
+若s[i - 1] 与 s[i]构成的数字可以解码，则dp[i] 再加上dp[i - 2],即：
+dp[i] += dp[i - 2]
+
+class Solution {
+public:
+    /**
+     * @param s a string,  encoded message
+     * @return an integer, the number of ways decoding
+     */
+    int numDecodings(string& s) {
+        // Write your code here
+        if (s.size() == 0)
+        {
+            return 0;
+        }
+        else if (s.size() == 1)
+        {
+            return s[0] == '0' ? 0 : 1;
+        }
+        if (s[0] == '0')
+        {
+            return 0;
+        }
+        vector<int> dp(s.size());
+        dp[0] = 1;
+        dp[1] = (s[1] == '0') ? 0 : dp[0];
+        if (s[0] == '1' || (s[0] == '2' && s[1] <= '6'))
+        {
+            dp[1] += 1;
+        }
+        for (int i = 2; i < s.size(); ++i)
+        {
+            dp[i] = (s[i] == '0') ? 0 :dp[i - 1];
+            if (s[i - 1] == '1' || (s[i - 1] == '2' && s[i] <= '6'))
+            {
+                dp[i] += dp[i - 2];
+            }
+        }
+        
+        return dp.back();
+        
+    }
+};
+
