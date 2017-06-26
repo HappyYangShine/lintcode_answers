@@ -6989,3 +6989,61 @@ public:
     }
 };
 
+
+
+118  不同的子序列
+
+给出字符串S和字符串T，计算S的不同的子序列中T出现的个数。
+
+子序列字符串是原始字符串通过删除一些(或零个)产生的一个新的字符串，并且对剩下的字符的相对位置没有影响。(比如，“ACE”是“ABCDE”的子序列字符串,而“AEC”不是)。 
+您在真实的面试中是否遇到过这个题？
+样例
+
+给出S = "rabbbit", T = "rabbit"
+
+返回 3
+挑战
+
+Do it in O(n2) time and O(n) memory.
+
+O(n2) memory is also acceptable if you do not know how to optimize memory.
+
+http://blog.csdn.net/cumt_cx/article/details/47926381
+
+
+class Solution {
+public:    
+    /**
+     * @param S, T: Two string.
+     * @return: Count the number of distinct subsequences
+     */
+    int numDistinct(string &S, string &T) {
+        // write your code here
+        if (S.size() < T.size())
+        {
+            return 0;
+        }
+        if (T.size() == 0)
+        {
+            return 1;
+        }
+        // dp[S.size()][T.size()], S中，前i个字符，转化为T中，前j个字符的方法个数
+        vector<vector<int>> dp(S.size() + 1, vector<int>(T.size() + 1, 0));
+        dp[0][0] = 1;
+        for (int i = 1; i <= S.size(); ++i)
+        {
+            dp[i][0] = 1;
+        }
+        for (int i = 1; i <= S.size(); ++i)
+        {
+            for (int j = 1; j <= T.size(); ++j)
+            {
+                dp[i][j] = dp[i - 1][j] + (S[i - 1] == T[j - 1] ? dp[i - 1][j - 1] : 0);
+            }
+        }
+        return dp[S.size()][T.size()];
+    }
+};
+
+
+
