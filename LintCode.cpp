@@ -7102,3 +7102,140 @@ public:
     }
 };
 
+76 最长上升子序列
+
+给定一个整数序列，找到最长上升子序列（LIS），返回LIS的长度。
+您在真实的面试中是否遇到过这个题？
+说明
+
+最长上升子序列的定义：
+
+最长上升子序列问题是在一个无序的给定序列中找到一个尽可能长的由低到高排列的子序列，这种子序列不一定是连续的或者唯一的。
+https://en.wikipedia.org/wiki/Longest_increasing_subsequence
+样例
+
+给出 [5,4,1,2,3]，LIS 是 [1,2,3]，返回 3
+给出 [4,2,4,5,3,7]，LIS 是 [2,4,5,7]，返回 4
+
+class Solution {
+public:
+    /**
+     * @param nums: The integer array
+     * @return: The length of LIS (longest increasing subsequence)
+     */
+    int longestIncreasingSubsequence(vector<int> nums) {
+        // write your code here
+        /*
+        if (nums.empty())
+        {
+            return 0;
+        }
+        vector<int> dp(nums.size(), 1);
+        int longest_num = 0;
+        for (int i = 1; i < nums.size(); ++i)
+        {
+            for (int j = 0; j < i; ++j)
+            {
+                if (nums[j] < nums[i])
+                {
+                    dp[i] = max(1, dp[j] + 1);
+                }
+            }
+            longest_num = max(longest_num, dp[i]);
+        }
+        return longest_num;
+        */
+        int f[nums.size()];
+
+        int max = 0;
+
+        for (int i = 0; i < nums.size(); i++) {
+
+            f[i] = 1;
+
+            for (int j = 0; j < i; j++) {
+
+                if (nums[j] < nums[i]) {
+
+                    f[i] = f[i] > f[j] + 1 ? f[i] : f[j] + 1;
+
+                }
+
+            }
+
+            if (f[i] > max) {
+
+                max = f[i];
+
+            }
+
+        }
+
+        return max;
+
+        
+    }
+};
+
+
+
+135  数字组合
+
+给出一组候选数字(C)和目标数字(T),找到C中所有的组合，使找出的数字和为T。C中的数字可以无限制重复被选取。
+
+例如,给出候选数组[2,3,6,7]和目标数字7，所求的解为：
+
+[7]，
+
+[2,2,3]
+注意事项
+
+    所有的数字(包括目标数字)均为正整数。
+    元素组合(a1, a2, … , ak)必须是非降序(ie, a1 ≤ a2 ≤ … ≤ ak)。
+    解集不能包含重复的组合。 
+
+您在真实的面试中是否遇到过这个题？
+样例
+
+给出候选数组[2,3,6,7]和目标数字7
+
+返回 [[7],[2,2,3]]
+
+class Solution {
+public:
+    /**
+     * @param candidates: A list of integers
+     * @param target:An integer
+     * @return: A list of lists of integers
+     */
+     vector<vector<int>> result;
+     vector<int> temp;
+    vector<vector<int> > combinationSum(vector<int> &candidates, int target) {
+        // write your code here
+        sort(candidates.begin(), candidates.end());
+        vector<int>::iterator last = unique(candidates.begin(), candidates.end());
+        candidates.erase(last, candidates.end());
+        Search(candidates, target, 0);
+        return result;
+    }
+    
+    void Search(vector<int> &candidate, int target, int begin_index)
+    {
+        if (target == 0)
+        {
+            result.push_back(temp);
+        }
+        else
+        {
+            for (int i = begin_index; i < candidate.size(); ++i)
+            {
+                if (candidate[i] <= target)
+                {
+                    temp.push_back(candidate[i]);
+                    Search(candidate, target -candidate[i], i);
+                    temp.pop_back();
+                }
+            }
+        }
+    }
+};
